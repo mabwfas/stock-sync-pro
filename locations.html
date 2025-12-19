@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations - StockSync Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="api.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --bg: #0f0f23;
+            --card: rgba(255, 255, 255, 0.05);
+            --text: #fff;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            background: rgba(15, 15, 35, 0.95);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+        }
+
+        .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link:hover {
+            background: var(--card);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+        }
+
+        .main {
+            margin-left: 250px;
+            padding: 2rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .location-card {
+            transition: all 0.3s;
+        }
+
+        .location-card:hover {
+            border-color: var(--primary);
+        }
+
+        .location-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .location-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .location-meta {
+            color: var(--muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.2rem 0.5rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--text);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <div class="logo"><i class="fas fa-sync"></i> StockSync</div>
+        <a href="index.html" class="nav-link"><i class="fas fa-box"></i> Inventory</a>
+        <a href="locations.html" class="nav-link active"><i class="fas fa-warehouse"></i> Locations</a>
+        <a href="transfers.html" class="nav-link"><i class="fas fa-exchange-alt"></i> Transfers</a>
+        <a href="alerts.html" class="nav-link"><i class="fas fa-bell"></i> Alerts</a>
+    </nav>
+
+    <main class="main">
+        <div class="header">
+            <div>
+                <h1 class="title">Locations</h1>
+                <p style="color: var(--muted); margin-top: 0.25rem;">Manage your inventory locations</p>
+            </div>
+            <button class="btn btn-primary" onclick="showModal()"><i class="fas fa-plus"></i> Add Location</button>
+        </div>
+
+        <div class="location-grid" id="locationGrid"></div>
+    </main>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 1.5rem;">Add Location</h3>
+            <div class="form-group"><label class="form-label">Location Name</label><input type="text" class="form-input"
+                    id="locName" placeholder="e.g. Warehouse B"></div>
+            <div class="form-group"><label class="form-label">Address</label><input type="text" class="form-input"
+                    id="locAddress" placeholder="Full address"></div>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button class="btn btn-primary" onclick="addLocation()" style="flex: 1;"><i class="fas fa-plus"></i>
+                    Add</button>
+                <button class="btn btn-outline" onclick="hideModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadLocations() {
+            const locations = SyncAPI.locations.getAll();
+            const products = SyncAPI.products.getAll();
+
+            document.getElementById('locationGrid').innerHTML = locations.map(loc => {
+                const productCount = products.filter(p => p.locationId === loc.id || (!p.locationId && loc.isDefault)).length;
+                return `
+                    <div class="card location-card">
+                        <div class="location-icon"><i class="fas fa-warehouse"></i></div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="location-name">${loc.name}</span>
+                            ${loc.isDefault ? '<span class="badge">Default</span>' : ''}
+                        </div>
+                        <p class="location-meta">${loc.address || 'No address set'}</p>
+                        <p class="location-meta">${productCount} products stored here</p>
+                        ${!loc.isDefault ? `<button class="btn btn-outline btn-sm" style="margin-top: 1rem;" onclick="deleteLocation('${loc.id}')"><i class="fas fa-trash"></i> Delete</button>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showModal() { document.getElementById('addModal').classList.add('active'); }
+        function hideModal() { document.getElementById('addModal').classList.remove('active'); }
+
+        function addLocation() {
+            const name = document.getElementById('locName').value.trim();
+            const address = document.getElementById('locAddress').value.trim();
+            if (!name) { alert('Please enter a location name'); return; }
+
+            SyncAPI.locations.add({ name, address });
+            hideModal();
+            loadLocations();
+            SyncAPI.toast.show('Location added!');
+        }
+
+        function deleteLocation(id) {
+            if (!confirm('Delete this location?')) return;
+            SyncAPI.locations.delete(id);
+            loadLocations();
+        }
+
+        loadLocations();
+    </script>
+</body>
+
+</html>
